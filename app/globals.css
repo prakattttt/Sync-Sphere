@@ -1,14 +1,7 @@
 @import "tailwindcss";
-@import "tw-animate-css";
 
 /* Dark mode is toggled by a `.dark` class on <html> (next-themes: attribute="class") */
 @custom-variant dark (&:is(.dark *));
-
-/* ==========================================================================
-   SyncSpace - "Architectural Precision" design tokens
-   Source of truth: DESIGN.md prose values (not the Material frontmatter).
-   Dark values are derived from the same slate/sapphire/ochre families.
-   ========================================================================== */
 
 :root {
   /* ---- Surfaces ---- */
