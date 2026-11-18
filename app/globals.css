@@ -1,26 +1,445 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+/* Dark mode is toggled by a `.dark` class on <html> (next-themes: attribute="class") */
+@custom-variant dark (&:is(.dark *));
+
+/* ==========================================================================
+   SyncSpace - "Architectural Precision" design tokens
+   Source of truth: DESIGN.md prose values (not the Material frontmatter).
+   Dark values are derived from the same slate/sapphire/ochre families.
+   ========================================================================== */
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ---- Surfaces ---- */
+  --background: #f8fafc;            /* Architectural Paper White (canvas) */
+  --foreground: #0f172a;            /* Midnight Graphite */
+  --surface-nav: #f1f5f9;           /* Porcelain Gray (sidebars, secondary panels) */
+  --card: #ffffff;                  /* Pure Drafting White */
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+
+  /* ---- Ink ---- */
+  --ink-body: #334155;              /* Deep Slate */
+  --ink-meta: #64748b;              /* Muted Slate Grey */
+
+  /* ---- Brand ---- */
+  --primary: #1e40af;               /* Deep Sapphire Royal Navy */
+  --primary-hover: #1a365d;
+  --primary-foreground: #ffffff;
+  --secondary: #f1f5f9;
+  --secondary-foreground: #334155;
+  --brand-secondary: #475569;       /* Cool Architectural Slate */
+  --tertiary: #d97706;              /* Signal Ochre (alerts, unread, dots) */
+  --tertiary-foreground: #ffffff;
+
+  /* ---- shadcn semantic mapping ---- */
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #f1f5f9;
+  --accent-foreground: #0f172a;
+  --destructive: #ba1a1a;
+  --destructive-foreground: #ffffff;
+  --destructive-container: #ffdad6;
+  --on-destructive-container: #93000a;
+
+  /* ---- Lines ---- */
+  --border: #e2e8f0;                /* Precision Gray Border (hairlines) */
+  --border-strong: #cbd5e1;         /* Popover / modal hairline */
+  --input: #e2e8f0;
+  --control-border: #94a3b8;        /* Checkbox / radio default border */
+  --ring: #1e40af;
+  --ring-glow: rgba(30, 64, 175, 0.15);
+
+  /* ---- Status chips ---- */
+  --chip-neutral-bg: #f1f5f9;
+  --chip-neutral-border: #e2e8f0;
+  --chip-neutral-text: #475569;
+  --chip-accent-bg: #fef3c7;
+  --chip-accent-border: #fde68a;
+  --chip-accent-text: #b45309;
+  --chip-brand-bg: #eff6ff;
+  --chip-brand-border: #dbeafe;
+  --chip-brand-text: #1e40af;
+
+  /* ---- Elevation (modals & popovers only; everything else is hairline) ---- */
+  --shadow-popover-value:
+    0 4px 16px -2px rgba(15, 23, 42, 0.06), 0 1px 3px 0 rgba(15, 23, 42, 0.04);
+
+  /* ---- Shape ---- */
+  --radius: 0.5rem;                 /* cards, dialogs, floating panels */
+
+  /* ---- Layout ---- */
+  --sidebar-width: 260px;
+  --inspector-width: 340px;
+  --gutter: 1rem;
+  --gutter-lg: 1.5rem;
+  --margin: 1rem;
+  --margin-md: 1.5rem;
+  --margin-lg: 2rem;
+
+  /* ---- shadcn sidebar ---- */
+  --sidebar: #f1f5f9;
+  --sidebar-foreground: #334155;
+  --sidebar-primary: #1e40af;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f1f5f9;
+  --sidebar-accent-foreground: #0f172a;
+  --sidebar-border: #e2e8f0;
+  --sidebar-ring: #1e40af;
+
+  /* ---- Charts (navy, slate, ochre family) ---- */
+  --chart-1: #1e40af;
+  --chart-2: #475569;
+  --chart-3: #d97706;
+  --chart-4: #3b82f6;
+  --chart-5: #94a3b8;
 }
+
+.dark {
+  /* ---- Surfaces ---- */
+  --background: #0b1120;
+  --foreground: #f1f5f9;
+  --surface-nav: #0f172a;
+  --card: #131c31;
+  --card-foreground: #f1f5f9;
+  --popover: #131c31;
+  --popover-foreground: #f1f5f9;
+
+  /* ---- Ink ---- */
+  --ink-body: #cbd5e1;
+  --ink-meta: #94a3b8;
+
+  /* ---- Brand (lifted for contrast on dark surfaces) ---- */
+  --primary: #3f5fd6;
+  --primary-hover: #5472e3;
+  --primary-foreground: #ffffff;
+  --secondary: #1e293b;
+  --secondary-foreground: #cbd5e1;
+  --brand-secondary: #94a3b8;
+  --tertiary: #f59e0b;
+  --tertiary-foreground: #1c1000;
+
+  /* ---- shadcn semantic mapping ---- */
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --accent: #1e293b;
+  --accent-foreground: #f1f5f9;
+  --destructive: #f87171;
+  --destructive-foreground: #1a0505;
+  --destructive-container: rgba(186, 26, 26, 0.25);
+  --on-destructive-container: #fca5a5;
+
+  /* ---- Lines ---- */
+  --border: #1e293b;
+  --border-strong: #334155;
+  --input: #1e293b;
+  --control-border: #64748b;
+  --ring: #6b86e8;
+  --ring-glow: rgba(107, 134, 232, 0.25);
+
+  /* ---- Status chips ---- */
+  --chip-neutral-bg: #1e293b;
+  --chip-neutral-border: #334155;
+  --chip-neutral-text: #cbd5e1;
+  --chip-accent-bg: rgba(217, 119, 6, 0.15);
+  --chip-accent-border: rgba(245, 158, 11, 0.35);
+  --chip-accent-text: #fcd34d;
+  --chip-brand-bg: rgba(63, 95, 214, 0.15);
+  --chip-brand-border: rgba(63, 95, 214, 0.4);
+  --chip-brand-text: #b8c4ff;
+
+  /* ---- Elevation ---- */
+  --shadow-popover-value:
+    0 4px 16px -2px rgba(0, 0, 0, 0.45), 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+
+  /* ---- shadcn sidebar ---- */
+  --sidebar: #0f172a;
+  --sidebar-foreground: #cbd5e1;
+  --sidebar-primary: #3f5fd6;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #1e293b;
+  --sidebar-accent-foreground: #f1f5f9;
+  --sidebar-border: #1e293b;
+  --sidebar-ring: #6b86e8;
+
+  /* ---- Charts ---- */
+  --chart-1: #6b86e8;
+  --chart-2: #94a3b8;
+  --chart-3: #f59e0b;
+  --chart-4: #60a5fa;
+  --chart-5: #64748b;
+}
+
+/* ==========================================================================
+   Tailwind theme bridge
+   Fonts are provided by next/font in app/layout.tsx via the CSS variables
+   --font-hanken-grotesk and --font-jetbrains-mono.
+   ========================================================================== */
 
 @theme inline {
+  --font-sans: var(--font-hanken-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-surface-nav: var(--surface-nav);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-ink-body: var(--ink-body);
+  --color-ink-meta: var(--ink-meta);
+
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-brand-secondary: var(--brand-secondary);
+  --color-tertiary: var(--tertiary);
+  --color-tertiary-foreground: var(--tertiary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-container: var(--destructive-container);
+  --color-on-destructive-container: var(--on-destructive-container);
+
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--input);
+  --color-control-border: var(--control-border);
+  --color-ring: var(--ring);
+  --color-ring-glow: var(--ring-glow);
+
+  --color-chip-neutral-bg: var(--chip-neutral-bg);
+  --color-chip-neutral-border: var(--chip-neutral-border);
+  --color-chip-neutral-text: var(--chip-neutral-text);
+  --color-chip-accent-bg: var(--chip-accent-bg);
+  --color-chip-accent-border: var(--chip-accent-border);
+  --color-chip-accent-text: var(--chip-accent-text);
+  --color-chip-brand-bg: var(--chip-brand-bg);
+  --color-chip-brand-border: var(--chip-brand-border);
+  --color-chip-brand-text: var(--chip-brand-text);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* Shape: 2px checkbox, 4px inputs/buttons/chips, 8px cards, 12px sheets */
+  --radius-xs: 0.125rem;
+  --radius-sm: 0.125rem;
+  --radius-md: 0.25rem;
+  --radius-lg: var(--radius);
+  --radius-xl: 0.75rem;
+
+  --shadow-popover: var(--shadow-popover-value);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-background font-sans text-foreground antialiased;
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  /* Focus: 2px solid ring with 2px offset (buttons, links, interactive) */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  /* Inputs: 1px brand border + 1px ambient glow, no outline */
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: none;
+    border-color: var(--ring);
+    box-shadow: 0 0 0 1px var(--ring-glow);
+  }
+
+  ::placeholder {
+    color: var(--ink-meta);
+  }
+
+  /* Form labels: 12px JetBrains Mono, uppercase, track-spaced */
+  label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  ::selection {
+    background: var(--chip-brand-bg);
+    color: var(--chip-brand-text);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ==========================================================================
+   Typography scale (DESIGN.md)  ->  class="type-headline-md" etc.
+   ========================================================================== */
+
+@utility type-display-lg {
+  font-family: var(--font-sans);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 38px;
+  letter-spacing: -0.02em;
+
+  @media (min-width: 768px) {
+    font-size: 40px;
+    line-height: 48px;
+  }
+}
+
+@utility type-headline-lg {
+  font-family: var(--font-sans);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 36px;
+  letter-spacing: -0.015em;
+}
+
+@utility type-headline-md {
+  font-family: var(--font-sans);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 28px;
+  letter-spacing: -0.01em;
+}
+
+@utility type-headline-sm {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+@utility type-body-lg {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+}
+
+@utility type-body-md {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+@utility type-body-sm {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 18px;
+}
+
+@utility type-label-md {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: 0.02em;
+}
+
+@utility type-label-sm {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: 0.04em;
+}
+
+@utility type-code-sm {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+}
+
+/* ==========================================================================
+   Component primitives
+   ========================================================================== */
+
+@layer components {
+  /* Status chips (JetBrains Mono label-sm) */
+  .chip {
+    @apply type-label-sm inline-flex items-center gap-1 rounded-md border px-2 py-0.5;
+  }
+  .chip-neutral {
+    background: var(--chip-neutral-bg);
+    border-color: var(--chip-neutral-border);
+    color: var(--chip-neutral-text);
+  }
+  .chip-accent {
+    background: var(--chip-accent-bg);
+    border-color: var(--chip-accent-border);
+    color: var(--chip-accent-text);
+  }
+  .chip-brand {
+    background: var(--chip-brand-bg);
+    border-color: var(--chip-brand-border);
+    color: var(--chip-brand-text);
+  }
+
+  /* Cards: white surface + single hairline, no shadow */
+  .panel {
+    @apply rounded-lg border bg-card text-card-foreground;
+  }
+  .panel-header {
+    @apply border-b px-4 py-3;
+    border-color: var(--surface-nav);
+  }
+
+  /* Channel / room rows */
+  .row {
+    @apply flex items-center gap-2 border-l-[3px] border-l-transparent px-3 py-1.5;
+    color: var(--brand-secondary);
+  }
+  .row:hover {
+    background: var(--background);
+  }
+  .row[data-active="true"] {
+    @apply font-semibold text-foreground;
+    border-left-color: var(--primary);
+    background: var(--surface-nav);
+  }
+  .row-prefix {
+    @apply type-label-md;
+    color: var(--ink-meta);
+  }
 }
