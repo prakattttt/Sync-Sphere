@@ -1,13 +1,23 @@
 export type OAuthProvider = "google" | "github";
 
-/** What the user is currently doing; used to disable/spin the right control. */
 export type AuthMethod = "credentials" | OAuthProvider;
 
-export type AuthResult =
+export type LoginField = "email" | "password";
+
+export type RegisterField =
+  | "name"
+  | "email"
+  | "password"
+  | "confirmPassword"
+  | "acceptTerms";
+
+export type AuthResult<TField extends string = never> =
   | { ok: true }
   | {
       ok: false;
       message: string;
-      /** When set, the message belongs to a single field instead of the form. */
-      field?: "email" | "password";
+      field?: TField;
     };
+
+export type LoginResult = AuthResult<LoginField>;
+export type RegisterResult = AuthResult<RegisterField>;

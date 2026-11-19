@@ -50,12 +50,17 @@ export function RegisterForm() {
     mode: "onTouched",
   });
 
-  const password = useWatch({ control, name: "password" });
+  const password = useWatch({
+    control,
+    name: "password",
+  });
+
   const pendingMethod = useAuthUiStore((state) => state.pendingMethod);
+
   const { signUp } = useAuthFlow();
 
-  // Cache Components keeps this screen mounted (hidden) after navigating away.
-  // Clear both password fields and any in-flight/error UI whenever it is hidden.
+  // Clear password fields and shared auth UI state
+  // whenever this screen is unmounted or hidden.
   useLayoutEffect(() => {
     return () => {
       resetField("password");
@@ -68,7 +73,10 @@ export function RegisterForm() {
     const result = await signUp(values);
 
     if (result && !result.ok && result.field) {
-      setError(result.field, { type: "server", message: result.message });
+      setError(result.field, {
+        type: "server",
+        message: result.message,
+      });
     }
   });
 
@@ -142,7 +150,6 @@ export function RegisterForm() {
                 autoComplete="new-password"
                 placeholder="At least 8 characters"
                 {...register("password", {
-                  // Keep the confirm field's mismatch message in sync.
                   onChange: () => {
                     if (getValues("confirmPassword")) {
                       void trigger("confirmPassword");
@@ -177,6 +184,7 @@ export function RegisterForm() {
                 {...fieldA11y("register-terms", errors.acceptTerms?.message)}
                 {...register("acceptTerms")}
               />
+
               <Label htmlFor="register-terms" className={checkboxLabelClass}>
                 I agree to the{" "}
                 <Link href={ROUTES.terms} className={authLinkClass}>
@@ -188,7 +196,8 @@ export function RegisterForm() {
                 </Link>
               </Label>
             </div>
-            {errors.acceptTerms?.message ? (
+
+            {errors.acceptTerms?.message && (
               <p
                 id="register-terms-error"
                 role="alert"
@@ -196,7 +205,7 @@ export function RegisterForm() {
               >
                 {errors.acceptTerms.message}
               </p>
-            ) : null}
+            )}
           </motion.div>
 
           <motion.div variants={fadeUp}>
@@ -205,7 +214,9 @@ export function RegisterForm() {
               className="w-full"
               loading={pendingMethod === "credentials"}
               loadingText="Creating account…"
-              disabled={pendingMethod !== null && pendingMethod !== "credentials"}
+              disabled={
+                pendingMethod !== null && pendingMethod !== "credentials"
+              }
             >
               Create account
             </Button>

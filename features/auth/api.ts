@@ -1,50 +1,65 @@
-/**
- * Auth API boundary.
- *
- * FRONTEND-ONLY STUBS. Replace the bodies with your Better Auth client calls
- * (e.g. `authClient.signIn.email`, `authClient.signUp.email`,
- * `authClient.signIn.social`) and map their errors to `AuthResult`.
- * The UI only depends on these function signatures.
- *
- * Demo triggers while the backend is not connected:
- *  - sign in with `error@syncspace.dev`  -> form-level error banner
- *  - register with `taken@syncspace.dev` -> field-level error on email
- */
+import { authClient } from "@/lib/auth-client";
+
 import type { LoginValues, RegisterValues } from "./schemas";
-import type { AuthResult, OAuthProvider } from "./types";
+import type {
+  LoginResult,
+  RegisterResult,
+  AuthResult,
+  OAuthProvider,
+} from "./types";
 
-const wait = (ms: number) =>
-  new Promise<void>((resolve) => setTimeout(resolve, ms));
+export async function signInWithEmail(
+  values: LoginValues,
+): Promise<LoginResult> {
+  const { error } = await authClient.signIn.email({
+    email: values.email,
+    password: values.password,
+    rememberMe: values.rememberMe,
+  });
 
-export async function signInWithEmail(values: LoginValues): Promise<AuthResult> {
-  await wait(900);
-
-  if (values.email.toLowerCase() === "error@syncspace.dev") {
-    return { ok: false, message: "Incorrect email or password. Try again." };
+  if (error) {
+    return {
+      ok: false,
+      message: error.message || "Invalid email or password.",
+    };
   }
+
   return { ok: true };
 }
 
 export async function signUpWithEmail(
   values: RegisterValues,
-): Promise<AuthResult> {
-  await wait(1100);
+): Promise<RegisterResult> {
+  const { error } = await authClient.signUp.email({
+    name: values.name,
+    email: values.email,
+    password: values.password,
+  });
 
-  if (values.email.toLowerCase() === "taken@syncspace.dev") {
+  if (error) {
     return {
       ok: false,
-      field: "email",
-      message: "An account with this email already exists.",
+      message: error.message || "Unable to create your account.",
     };
   }
+
   return { ok: true };
 }
 
 export async function signInWithProvider(
   provider: OAuthProvider,
 ): Promise<AuthResult> {
-  // Real implementation redirects the browser to the provider.
-  void provider;
-  await wait(1200);
+  const { error } = await authClient.signIn.social({
+    provider,
+    callbackURL: "/",
+  });
+
+  if (error) {
+    return {
+      ok: false,
+      message: error.message || `Unable to sign in with ${provider}.`,
+    };
+  }
+
   return { ok: true };
 }

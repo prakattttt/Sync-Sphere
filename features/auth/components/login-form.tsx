@@ -32,18 +32,24 @@ export function LoginForm() {
     register,
     handleSubmit,
     resetField,
+    setError,
     formState: { errors },
   } = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "", rememberMe: true },
+    defaultValues: {
+      email: "",
+      password: "",
+      rememberMe: true,
+    },
     mode: "onTouched",
   });
 
   const pendingMethod = useAuthUiStore((state) => state.pendingMethod);
+
   const { signIn } = useAuthFlow();
 
-  // Cache Components keeps this screen mounted (hidden) after navigating away.
-  // Clear the password and any in-flight/error UI whenever it is hidden.
+  // Clear the password and shared auth UI state
+  // whenever this screen is unmounted or hidden.
   useLayoutEffect(() => {
     return () => {
       resetField("password");
@@ -52,7 +58,14 @@ export function LoginForm() {
   }, [resetField]);
 
   const onSubmit = handleSubmit(async (values) => {
-    await signIn(values);
+    const result = await signIn(values);
+
+    if (result && !result.ok && result.field) {
+      setError(result.field, {
+        type: "server",
+        message: result.message,
+      });
+    }
   });
 
   return (
@@ -123,6 +136,7 @@ export function LoginForm() {
 
           <motion.div variants={fadeUp} className="flex items-center gap-2.5">
             <Checkbox id="login-remember" {...register("rememberMe")} />
+
             <Label htmlFor="login-remember" className={checkboxLabelClass}>
               Keep me signed in on this device
             </Label>
@@ -134,7 +148,9 @@ export function LoginForm() {
               className="w-full"
               loading={pendingMethod === "credentials"}
               loadingText="Signing in…"
-              disabled={pendingMethod !== null && pendingMethod !== "credentials"}
+              disabled={
+                pendingMethod !== null && pendingMethod !== "credentials"
+              }
             >
               Sign in
             </Button>
