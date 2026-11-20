@@ -1,8 +1,8 @@
-import { redirect } from "next/navigation";
+import { requireSession } from "@/features/auth/auth-session";
 
-import { ROUTES } from "@/lib/constants";
-
-/** Placeholder: the marketing/landing page comes later. Send visitors to sign in. */
-export default function HomePage() {
-  redirect(ROUTES.login);
+export default async function HomePage() {
+  const session = await requireSession();
+  return (
+    <div>Welcome, {session.user.name}!</div>
+  )
 }
