@@ -10,7 +10,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 
 import { Avatar } from "@/components/ui/avatar";
 import { Logo } from "@/components/shared/logo";
@@ -19,6 +19,7 @@ import { ROUTES } from "@/lib/constants";
 import { currentUser, rooms } from "../data/mock";
 import { useShellStore } from "../store";
 import { WorkspaceSwitcher } from "./workspace-switcher";
+import { logOutUser } from "@/features/auth/api";
 
 const NAV: { href: string; label: string; Icon: LucideIcon }[] = [
   { href: ROUTES.workspace, label: "Home", Icon: House },
@@ -32,10 +33,22 @@ export function SidebarContent() {
   const pathname = usePathname();
   const closeDrawer = useShellStore((state) => state.closeDrawer);
 
+  const logout = async () => {
+    const response = await logOutUser();
+
+    if (response.ok) {
+      redirect(ROUTES.login);
+    }
+  };
+
   return (
     <div className="flex h-full flex-col bg-sidebar text-sidebar-foreground [--dot-ring:var(--sidebar)]">
       <div className="flex h-14 shrink-0 items-center px-4">
-        <Link href={ROUTES.workspace} onNavigate={closeDrawer} className="rounded-md">
+        <Link
+          href={ROUTES.workspace}
+          onNavigate={closeDrawer}
+          className="rounded-md"
+        >
           <Logo />
         </Link>
       </div>
@@ -44,7 +57,10 @@ export function SidebarContent() {
         <WorkspaceSwitcher />
       </div>
 
-      <nav aria-label="Workspace" className="flex-1 space-y-5 overflow-y-auto py-2">
+      <nav
+        aria-label="Workspace"
+        className="flex-1 space-y-5 overflow-y-auto py-2"
+      >
         <ul className="space-y-0.5">
           {NAV.map(({ href, label, Icon }) => (
             <li key={href}>
@@ -108,15 +124,17 @@ export function SidebarContent() {
           <p className="truncate text-[13px] font-semibold leading-4 text-foreground">
             {currentUser.name}
           </p>
-          <p className="type-label-sm truncate text-ink-meta">{currentUser.email}</p>
+          <p className="type-label-sm truncate text-ink-meta">
+            {currentUser.email}
+          </p>
         </div>
-        <Link
-          href={ROUTES.login}
+        <button
+          onClick={logout}
           aria-label="Sign out"
           className="grid size-8 place-items-center rounded-md text-ink-meta transition-colors hover:bg-background hover:text-foreground"
         >
           <LogOut className="size-4" aria-hidden />
-        </Link>
+        </button>
       </div>
     </div>
   );
