@@ -5,16 +5,14 @@ import { motion } from "motion/react";
 import { fadeUp, staggerContainer } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
-import { documents, members, tasks } from "../data/mock";
+import { documents, members, taskSummary } from "../data/mock";
 import { AnimatedNumber } from "./animated-number";
 
-const open = tasks.filter((task) => task.status !== "done");
-const inProgress = tasks.filter((task) => task.status === "in_progress");
 const online = members.filter((member) => member.online);
 
 const STATS = [
-  { label: "Open tasks", value: open.length, note: "2 due this week", tone: "accent" },
-  { label: "In progress", value: inProgress.length, note: "of " + open.length + " open", tone: "brand" },
+  { label: "Open tasks", value: taskSummary.open, note: `${taskSummary.dueSoon} due soon`, tone: "accent" },
+  { label: "In progress", value: taskSummary.inProgress, note: `of ${taskSummary.open} open`, tone: "brand" },
   { label: "Documents", value: documents.length, note: "1 new today", tone: "neutral" },
   { label: "Online now", value: online.length, note: "of " + members.length + " members", tone: "brand" },
 ] as const;
