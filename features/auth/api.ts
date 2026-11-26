@@ -63,3 +63,16 @@ export async function signInWithProvider(
 
   return { ok: true };
 }
+
+export async function logOutUser() {
+  const { error } = await authClient.signOut();
+
+  if (error) {
+    return {
+      ok: false,
+      message: error.message || `Unable to sign out.`,
+    };
+  }
+
+  return { ok: true };
+}
