@@ -1,15 +1,29 @@
 "use client";
 
 import { Bell, Menu, Search } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { ROUTES } from "@/lib/constants";
 
 import { members } from "../data/mock";
 import { useShellStore } from "../store";
 
+/** Breadcrumb label for the current screen. */
+function pageTitle(pathname: string): string {
+  if (pathname === ROUTES.tasks) return "Tasks";
+  if (pathname === ROUTES.documents) return "Documents";
+  if (pathname === ROUTES.activity) return "Activity";
+  if (pathname.startsWith(`${ROUTES.workspace}/rooms/`)) {
+    return `#${pathname.split("/").pop()}`;
+  }
+  return "Home";
+}
+
 export function Topbar() {
+  const pathname = usePathname();
   const openDrawer = useShellStore((state) => state.openDrawer);
   const online = members.filter((member) => member.online);
 
@@ -30,7 +44,7 @@ export function Topbar() {
         <span aria-hidden className="text-ink-meta">
           /
         </span>
-        <span className="text-foreground">Home</span>
+        <span className="text-foreground">{pageTitle(pathname)}</span>
       </nav>
 
       <button

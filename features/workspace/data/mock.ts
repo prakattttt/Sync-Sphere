@@ -3,6 +3,9 @@
  * Replace each export with a real query (Server Component fetch / Server
  * Action) when the API exists; the component props already match these shapes.
  */
+import { initialTasks } from "@/features/tasks/data/mock";
+import { getDue, isDueSoon } from "@/features/tasks/lib/dates";
+
 import type {
   ActivityItem,
   DocItem,
@@ -13,6 +16,8 @@ import type {
 } from "../types";
 
 export const currentUser = {
+  /** Matches the member id of "Ada Lovelace" below. */
+  id: "m1",
   name: "Ada Lovelace",
   email: "ada@syncspace.dev",
   initials: "AL",
@@ -65,21 +70,36 @@ export const rooms: Room[] = [
   },
 ];
 
-export const tasks: Task[] = [
-  { id: "t1", title: "Implement authentication", status: "in_progress", room: "backend-development", due: "Fri", dueSoon: true },
-  { id: "t2", title: "Design database schema", status: "in_progress", room: "backend-development", due: "Thu", dueSoon: true },
-  { id: "t3", title: "Build workspace home screen", status: "in_progress", room: "frontend-development", due: "Mon", dueSoon: false },
-  { id: "t4", title: "Write API documentation", status: "todo", room: "general", due: "Next week", dueSoon: false },
-  { id: "t5", title: "Set up Docker Compose for Postgres", status: "todo", room: "backend-development", due: "Next week", dueSoon: false },
-  { id: "t6", title: "Choose colour palette", status: "done", room: "frontend-development", due: "Done", dueSoon: false },
-];
+const openTasks = initialTasks.filter((task) => task.status !== "done");
+
+/** Workspace-wide numbers for the home stat cards (same source as the board). */
+export const taskSummary = {
+  open: openTasks.length,
+  inProgress: initialTasks.filter((task) => task.status === "in_progress").length,
+  dueSoon: openTasks.filter((task) => isDueSoon(task.dueDate, task.status)).length,
+};
+
+/** "My tasks" on the home page: the current user's tasks from the shared list. */
+export const tasks: Task[] = initialTasks
+  .filter((task) => task.assigneeId === currentUser.id)
+  .map((task) => ({
+    id: task.id,
+    title: task.title,
+    status: task.status,
+    room: task.roomSlug,
+    due:
+      task.status === "done"
+        ? "Done"
+        : (getDue(task.dueDate, task.status)?.label ?? "No date"),
+    dueSoon: isDueSoon(task.dueDate, task.status),
+  }));
 
 export const activity: ActivityItem[] = [
   { id: "a1", kind: "task", actor: "Rohan K.", actorInitials: "RK", verb: "moved", target: "Implement authentication to in_progress", time: "10:44" },
   { id: "a2", kind: "comment", actor: "Anita M.", actorInitials: "AM", verb: "commented on", target: "Project Requirements", time: "10:31" },
   { id: "a3", kind: "doc", actor: "Sita P.", actorInitials: "SP", verb: "created", target: "API Documentation", time: "09:58" },
   { id: "a4", kind: "room", actor: "Ada L.", actorInitials: "AL", verb: "created room", target: "#frontend-development", time: "Yesterday" },
-  { id: "a5", kind: "task", actor: "Anita M.", actorInitials: "AM", verb: "assigned", target: "Design database schema to Rohan K.", time: "Yesterday" },
+  { id: "a5", kind: "task", actor: "Ada L.", actorInitials: "AL", verb: "assigned", target: "Design database schema to Anita M.", time: "Yesterday" },
 ];
 
 export const documents: DocItem[] = [

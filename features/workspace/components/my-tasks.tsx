@@ -106,9 +106,11 @@ export function MyTasks() {
               >
                 {task.title}
               </span>
-              <span className="type-label-sm hidden text-ink-meta sm:inline">
-                #{task.room}
-              </span>
+              {task.room ? (
+                <span className="type-label-sm hidden text-ink-meta sm:inline">
+                  #{task.room}
+                </span>
+              ) : null}
               <span
                 className={cn(
                   "type-label-sm w-17 shrink-0 text-right",

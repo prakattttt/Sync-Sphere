@@ -1,16 +1,29 @@
 "use client";
 
 import { Plus, UserPlus } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
+import { ROUTES } from "@/lib/constants";
 
-import type { User } from "better-auth";
+import { useTasksStore } from "@/features/tasks/store";
 
-interface Props {
-  user: User;
-}
+import { currentUser, tasks } from "../data/mock";
 
-export function WorkspaceHeader({ user }: Props) {
+const myDueSoon = tasks.filter(
+  (task) => task.dueSoon && task.status !== "done",
+).length;
+
+export function WorkspaceHeader() {
+  const router = useRouter();
+  const firstName = currentUser.name.split(" ")[0];
+
+  // Open the tasks screen with the "New task" dialog already showing.
+  const createTask = () => {
+    useTasksStore.getState().openCreate("todo");
+    router.push(ROUTES.tasks);
+  };
+
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div className="space-y-2">
@@ -21,14 +34,20 @@ export function WorkspaceHeader({ user }: Props) {
           <span className="chip chip-brand">owner</span>
         </div>
         <h1 className="type-headline-lg text-foreground">
-          Welcome back, {user.name}
+          Welcome back, {firstName}
         </h1>
         <p className="type-body-md max-w-xl text-ink-body">
-          You have{" "}
-          <span className="font-semibold text-foreground">
-            2 tasks due this week
-          </span>{" "}
-          and unread messages in{" "}
+          {myDueSoon > 0 ? (
+            <>
+              You have{" "}
+              <span className="font-semibold text-foreground">
+                {myDueSoon} {myDueSoon === 1 ? "task" : "tasks"} due soon
+              </span>{" "}
+              and unread messages in{" "}
+            </>
+          ) : (
+            <>Nothing is due soon. You have unread messages in </>
+          )}
           <span className="type-code-sm rounded-sm bg-surface-nav px-1 py-0.5 text-foreground">
             #backend-development
           </span>
@@ -41,7 +60,7 @@ export function WorkspaceHeader({ user }: Props) {
           <UserPlus aria-hidden />
           Invite
         </Button>
-        <Button size="compact">
+        <Button size="compact" onClick={createTask}>
           <Plus aria-hidden />
           New task
         </Button>

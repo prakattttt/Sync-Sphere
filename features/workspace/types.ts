@@ -35,7 +35,7 @@ export type Task = {
   id: string;
   title: string;
   status: TaskStatus;
-  room: string;
+  room: string | null;
   /** Short human label, e.g. "Fri" or "Next week". */
   due: string;
   dueSoon: boolean;
