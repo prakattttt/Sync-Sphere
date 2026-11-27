@@ -7,16 +7,19 @@ import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/lib/constants";
 
 import { useTasksStore } from "@/features/tasks/store";
+import { User } from "better-auth";
+import { tasks } from "../data/mock";
 
-import { currentUser, tasks } from "../data/mock";
+interface Props {
+  user: User;
+}
 
 const myDueSoon = tasks.filter(
   (task) => task.dueSoon && task.status !== "done",
 ).length;
 
-export function WorkspaceHeader() {
+export function WorkspaceHeader({ user }: Props) {
   const router = useRouter();
-  const firstName = currentUser.name.split(" ")[0];
 
   // Open the tasks screen with the "New task" dialog already showing.
   const createTask = () => {
@@ -34,7 +37,7 @@ export function WorkspaceHeader() {
           <span className="chip chip-brand">owner</span>
         </div>
         <h1 className="type-headline-lg text-foreground">
-          Welcome back, {firstName}
+          Welcome back, {user.name.split(" ")[0]}
         </h1>
         <p className="type-body-md max-w-xl text-ink-body">
           {myDueSoon > 0 ? (
